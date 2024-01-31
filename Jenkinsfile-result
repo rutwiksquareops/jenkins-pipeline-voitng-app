@@ -51,51 +51,51 @@ pipeline {
             }
         }
 
-        //  stage('Update Helm Chart and Push to Git') {
-        //     agent {
-        //         kubernetes {
-        //             label 'jenkinsrun'
-        //             defaultContainer 'builder'
-        //             yaml """
-        //             apiVersion: v1
-        //             kind: Pod
-        //             spec:
-        //               containers:
-        //               - name: builder
-        //                 image: squareops/jenkins-build-agent:v3
-        //                 securityContext:
-        //                   privileged: true
-        //                 volumeMounts:
-        //                   - name: builder-storage
-        //                     mountPath: /var/lib/docker
-        //               volumes:
-        //                 - name: builder-storage
-        //                   emptyDir: {}
-        //             """
-        //         }
-        //     }
-        //     // steps {
-        //     //     script {
-        //     //         withCredentials([gitUsernamePassword(credentialsId: 'github-token', gitToolName: 'Default')]) {
-        //     //             last_started_build_stage = env.STAGE_NAME
-        //     //             sh '''
-        //     //             git clone -b main ##helm-repo##
-        //     //             git config --global user.email rutwik@squareops.com
-        //     //             git config --global user.name rutwiksquareops
-        //     //             ls -la
-        //     //             pwd
-        //     //             cd Votingapp-ArgoCD
-        //     //             ls -la
-        //     //             cd result-chart
-        //     //             ls -la
-        //     //             yq e -i '.image.tag = "'$BUILD_NUMBER'"' values.yaml
-        //     //             git add .
-        //     //             git commit -m 'Docker Image version Update "'$JOB_NAME'"-"'$BUILD_NUMBER'"'
-        //     //             git push origin main
-        //     //             '''
-        //     //         }
-        //     //     }
-        //     // }
-        // }
+         stage('Update Helm Chart and Push to Git') {
+            agent {
+                kubernetes {
+                    label 'jenkinsrun'
+                    defaultContainer 'builder'
+                    yaml """
+                    apiVersion: v1
+                    kind: Pod
+                    spec:
+                      containers:
+                      - name: builder
+                        image: squareops/jenkins-build-agent:v3
+                        securityContext:
+                          privileged: true
+                        volumeMounts:
+                          - name: builder-storage
+                            mountPath: /var/lib/docker
+                      volumes:
+                        - name: builder-storage
+                          emptyDir: {}
+                    """
+                }
+            }
+            steps {
+                script {
+                    withCredentials([gitUsernamePassword(credentialsId: 'github-token', gitToolName: 'Default')]) {
+                        last_started_build_stage = env.STAGE_NAME
+                        sh '''
+                        git clone -b main https://github.com/rutwiksquareops/helm-voting.git
+                        git config --global user.email rutwik@squareops.com
+                        git config --global user.name rutwiksquareops
+                        ls -la
+                        pwd
+                        cd Votingapp-ArgoCD
+                        ls -la
+                        cd result-chart
+                        ls -la
+                        yq e -i '.image.tag = "'$BUILD_NUMBER'"' values.yaml
+                        git add .
+                        git commit -m 'Docker Image version Update "'$JOB_NAME'"-"'$BUILD_NUMBER'"'
+                        git push origin main
+                        '''
+                    }
+                }
+            }
+        }
     }
 }
