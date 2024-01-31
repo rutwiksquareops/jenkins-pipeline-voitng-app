@@ -76,7 +76,7 @@ pipeline {
             }
             steps {
                 script {
-                    withCredentials([gitUsernamePassword(credentialsId: 'github-token', gitToolName: 'Default')]) {
+                    withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'USER_NAME', passwordVariable: 'PASSWORD')]) {
                         last_started_build_stage = env.STAGE_NAME
                         sh '''
                         git clone -b main https://github.com/rutwiksquareops/helm-voting.git
@@ -91,7 +91,7 @@ pipeline {
                         yq e -i '.image.tag = "'$BUILD_NUMBER'"' values.yaml
                         git add .
                         git commit -m 'Docker Image version Update "'$JOB_NAME'"-"'$BUILD_NUMBER'"'
-                        git push origin main
+                        git push https://${USER_NAME}:${PASSWORD}@github.com/rutwiksquareops//helm-voting.git main
                         '''
                     }
                 }
