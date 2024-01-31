@@ -84,7 +84,7 @@ pipeline {
                         git config --global user.name rutwiksquareops
                         ls -la
                         pwd
-                        cd Votingapp-ArgoCD
+                        cd helm-voting
                         ls -la
                         cd result-chart
                         ls -la
