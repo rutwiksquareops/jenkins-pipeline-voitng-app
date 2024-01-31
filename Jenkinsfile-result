@@ -52,29 +52,29 @@ pipeline {
             }
         }
 
-         stage('Update Helm Chart and Push to Git') {
-            agent {
-                kubernetes {
-                    label 'jenkinsrun'
-                    defaultContainer 'builder'
-                    yaml """
-                    apiVersion: v1
-                    kind: Pod
-                    spec:
-                      containers:
-                      - name: builder
-                        image: squareops/jenkins-build-agent:v3
-                        securityContext:
-                          privileged: true
-                        volumeMounts:
-                          - name: builder-storage
-                            mountPath: /var/lib/docker
-                      volumes:
-                        - name: builder-storage
-                          emptyDir: {}
-                    """
-                }
-            }
+        //  stage('Update Helm Chart and Push to Git') {
+        //     agent {
+        //         kubernetes {
+        //             label 'jenkinsrun'
+        //             defaultContainer 'builder'
+        //             yaml """
+        //             apiVersion: v1
+        //             kind: Pod
+        //             spec:
+        //               containers:
+        //               - name: builder
+        //                 image: squareops/jenkins-build-agent:v3
+        //                 securityContext:
+        //                   privileged: true
+        //                 volumeMounts:
+        //                   - name: builder-storage
+        //                     mountPath: /var/lib/docker
+        //               volumes:
+        //                 - name: builder-storage
+        //                   emptyDir: {}
+        //             """
+        //         }
+        //     }
             // steps {
             //     script {
             //         withCredentials([gitUsernamePassword(credentialsId: 'github-token', gitToolName: 'Default')]) {
