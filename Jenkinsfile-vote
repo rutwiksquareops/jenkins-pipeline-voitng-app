@@ -1,0 +1,102 @@
+pipeline {
+    agent {
+        kubernetes {
+            label 'kaniko'
+            yaml """
+            apiVersion: v1
+            kind: Pod
+            metadata:
+                name: kaniko
+            spec:
+                restartPolicy: Never
+                volumes:
+                - name: kaniko-docker-secret
+                  secret:
+                    secretName: kaniko-secret
+                containers:
+                - name: kaniko
+                  image: gcr.io/kaniko-project/executor:debug
+                  command:
+                  - /busybox/cat
+                  tty: true
+                  volumeMounts:
+                  - name: kaniko-docker-secret
+                    mountPath: /kaniko/.docker
+            """
+        }
+    }
+
+    environment {
+        DOCKER_HUB_USER = 'mona1712'
+        DOCKER_HUB_PASS = 'Chawla1712?'
+        last_started_build_stage = ""
+
+    }
+
+    stages {
+        stage("Cloning the repo") {
+            steps {
+                echo "Cloning the app"
+                container('kaniko') {
+                    git branch: 'main', url: 'https://github.com/Monachawla1712/Voting-app.git'                }
+            }
+        }
+
+        stage("Build docker image") {
+            steps {
+                echo "Building the code"
+                container('kaniko') {
+                    // Use Kaniko to build the Docker image
+                    sh "/kaniko/executor --dockerfile `pwd`/vote/Dockerfile --context=`pwd` --destination=${DOCKER_HUB_USER}/vote-app-vote:${BUILD_NUMBER}"
+                }
+            }
+        }
+
+         stage('Update Helm Chart and Push to Git') {
+            agent {
+                kubernetes {
+                    label 'jenkinsrun'
+                    defaultContainer 'builder'
+                    yaml """
+                    apiVersion: v1
+                    kind: Pod
+                    spec:
+                      containers:
+                      - name: builder
+                        image: squareops/jenkins-build-agent:v3
+                        securityContext:
+                          privileged: true
+                        volumeMounts:
+                          - name: builder-storage
+                            mountPath: /var/lib/docker
+                      volumes:
+                        - name: builder-storage
+                          emptyDir: {}
+                    """
+                }
+            }
+            steps {
+                script {
+                    withCredentials([gitUsernamePassword(credentialsId: 'github-token', gitToolName: 'Default')]) {
+                        last_started_build_stage = env.STAGE_NAME
+                        sh '''
+                        git clone -b main https://github.com/Monachawla1712/Votingapp-ArgoCD.git
+                        git config --global user.email chawalamona44@gmail.com
+                        git config --global user.name Monachawla1712
+                        ls -la
+                        pwd
+                        cd Votingapp-ArgoCD
+                        ls -la
+                        cd vote-chart
+                        ls -la
+                        yq e -i '.image.tag = "'$BUILD_NUMBER'"' values.yaml
+                        git add .
+                        git commit -m 'Docker Image version Update "'$JOB_NAME'"-"'$BUILD_NUMBER'"'
+                        git push origin main
+                        '''
+                    }
+                }
+            }
+        }
+    }
+}
