@@ -38,7 +38,7 @@ pipeline {
             steps {
                 echo "Cloning the app"
                 container('kaniko') {
-                    git branch: 'main', url: '####'                }
+                    git branch: 'main', url: 'https://github.com/rutwiksquareops/jenkins-pipeline-voitng-app.git'                }
             }
         }
 
@@ -75,28 +75,28 @@ pipeline {
                     """
                 }
             }
-            steps {
-                script {
-                    withCredentials([gitUsernamePassword(credentialsId: 'github-token', gitToolName: 'Default')]) {
-                        last_started_build_stage = env.STAGE_NAME
-                        sh '''
-                        git clone -b main ##helm-repo##
-                        git config --global user.email rutwik@squareops.com
-                        git config --global user.name rutwiksquareops
-                        ls -la
-                        pwd
-                        cd Votingapp-ArgoCD
-                        ls -la
-                        cd result-chart
-                        ls -la
-                        yq e -i '.image.tag = "'$BUILD_NUMBER'"' values.yaml
-                        git add .
-                        git commit -m 'Docker Image version Update "'$JOB_NAME'"-"'$BUILD_NUMBER'"'
-                        git push origin main
-                        '''
-                    }
-                }
-            }
+            // steps {
+            //     script {
+            //         withCredentials([gitUsernamePassword(credentialsId: 'github-token', gitToolName: 'Default')]) {
+            //             last_started_build_stage = env.STAGE_NAME
+            //             sh '''
+            //             git clone -b main ##helm-repo##
+            //             git config --global user.email rutwik@squareops.com
+            //             git config --global user.name rutwiksquareops
+            //             ls -la
+            //             pwd
+            //             cd Votingapp-ArgoCD
+            //             ls -la
+            //             cd result-chart
+            //             ls -la
+            //             yq e -i '.image.tag = "'$BUILD_NUMBER'"' values.yaml
+            //             git add .
+            //             git commit -m 'Docker Image version Update "'$JOB_NAME'"-"'$BUILD_NUMBER'"'
+            //             git push origin main
+            //             '''
+            //         }
+            //     }
+            // }
         }
     }
 }

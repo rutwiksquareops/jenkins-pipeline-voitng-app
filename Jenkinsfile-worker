@@ -27,8 +27,8 @@ pipeline {
     }
 
     environment {
-        DOCKER_HUB_USER = 'mona1712'
-        DOCKER_HUB_PASS = 'Chawla1712?'
+        DOCKER_HUB_USER = 'rutwiksquarops'
+        DOCKER_HUB_PASS = 'Gems@2211'
         last_started_build_stage = ""
 
     }
@@ -38,7 +38,7 @@ pipeline {
             steps {
                 echo "Cloning the app"
                 container('kaniko') {
-                    git branch: 'main', url: 'https://github.com/Monachawla1712/Voting-app.git'                }
+                    git branch: 'main', url: 'https://github.com/rutwiksquareops/jenkins-pipeline-voitng-app.git'                }
             }
         }
 
@@ -80,9 +80,9 @@ pipeline {
                     withCredentials([gitUsernamePassword(credentialsId: 'github-token', gitToolName: 'Default')]) {
                         last_started_build_stage = env.STAGE_NAME
                         sh '''
-                        git clone -b main https://github.com/Monachawla1712/Votingapp-ArgoCD.git
-                        git config --global user.email chawalamona44@gmail.com
-                        git config --global user.name Monachawla1712
+                        git clone -b main ###helm-repo##
+                        git config --global user.email rutwik@squreops.com
+                        git config --global user.name rutwiksquareops
                         ls -la
                         pwd
                         cd Votingapp-ArgoCD
