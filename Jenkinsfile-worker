@@ -80,12 +80,12 @@ pipeline {
                     withCredentials([gitUsernamePassword(credentialsId: 'github-token', gitToolName: 'Default')]) {
                         last_started_build_stage = env.STAGE_NAME
                         sh '''
-                        git clone -b main ###helm-repo##
+                        git clone -b main https://github.com/rutwiksquareops/helm-voting.git
                         git config --global user.email rutwik@squreops.com
                         git config --global user.name rutwiksquareops
                         ls -la
                         pwd
-                        cd Votingapp-ArgoCD
+                        cd helm-voting
                         ls -la
                         cd worker-chart
                         ls -la
