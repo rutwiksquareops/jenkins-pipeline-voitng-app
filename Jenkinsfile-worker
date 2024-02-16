@@ -41,6 +41,29 @@ pipeline {
             }
         }
 
+stage('Scan Code with Gitleaks and Generate Report') {
+            steps {
+                // Install and run gitleaks
+                sh 'curl -L -o gitleaks https://github.com/zricethezav/gitleaks/releases/download/v7.2.1/gitleaks-linux-amd64'
+                sh 'chmod +x gitleaks'
+                sh './gitleaks --path ./worker --report detect-secrets-report.json --format JSON'
+            }
+        }
+
+        stage('Check for Secrets') {
+            steps {
+                script {
+                    def reportFile = readFile('detect-secrets-report.json')
+                    if (reportFile.trim().isEmpty()) {
+                        echo "No secrets detected. Pipeline continues."
+                    } else {
+                        error "Secrets detected in the code. Aborting the pipeline."
+                    }
+                }
+            }
+        }
+
+
         stage("Build docker image") {
             steps {
                 echo "Building the code"
