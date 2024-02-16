@@ -28,7 +28,6 @@ pipeline {
 
     environment {
         DOCKER_HUB_USER = 'rutwiksquareops'
-        DOCKER_HUB_PASS = 'Gems@2211'
         last_started_build_stage = ""
 
     }
