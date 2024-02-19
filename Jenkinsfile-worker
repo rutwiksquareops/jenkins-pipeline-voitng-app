@@ -47,7 +47,7 @@ stage('Scan Code with Gitleaks and Generate Report') {
                 sh 'curl -L -o gitleaks https://github.com/zricethezav/gitleaks/releases/download/v7.2.1/gitleaks-linux-amd64'
                 sh 'chmod +x gitleaks'
                 sh './gitleaks --path ./worker --report detect-secrets-report.json --format JSON'
-                sh 'cat ./worker/detect-secrets-report.json'
+                sh 'cat detect-secrets-report.json'
             }
         }
 
