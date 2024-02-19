@@ -65,19 +65,11 @@ stage('Scan Code with Gitleaks and Generate Report') {
                 }
             }
         } */
-
+        
         stage('SonarQube analysis') {
-            environment {
-                SCANNER_HOME = tool 'SonarQubeScanner';    
-            }
-
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh "${SCANNER_HOME}/bin/sonar-scanner"
-                }
-                echo 'SonarQube Quality gate'
-                timeout(time: 1, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
+                    sh "./gradlew sonarqube"
                 }
             }
         }
