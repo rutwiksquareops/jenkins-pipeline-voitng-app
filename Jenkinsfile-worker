@@ -49,6 +49,7 @@ stage('Scan Code with Gitleaks and Generate Report') {
                 sh 'chmod +x gitleaks'
                 sh './gitleaks --path ./worker --report detect-secrets-report.json --format JSON'
                 sh 'ls ./worker/'
+                sh 'ls -a'
                 sh 'cat detect-secrets-report.json'
             }
         }
