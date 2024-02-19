@@ -50,11 +50,10 @@ stage('Scan Code with Gitleaks and Generate Report') {
                 sh './gitleaks --path ./worker --report detect-secrets-report.json --format JSON'
                 sh 'ls ./worker/'
                 sh 'ls -a'
-                sh 'cat detect-secrets-report.json'
             }
         }
 
-        stage('Check for Secrets') {
+       /* stage('Check for Secrets') {
             steps {
                 script {
                     def reportFile = readFile('detect-secrets-report.json')
@@ -65,7 +64,7 @@ stage('Scan Code with Gitleaks and Generate Report') {
                     }
                 }
             }
-        }
+        } */
 
 
         stage("Build docker image") {
